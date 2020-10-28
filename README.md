@@ -1,57 +1,45 @@
-# ZAP Action Full Scan
+# ZAP动作全扫描
 
-A GitHub Action for running the OWASP ZAP [Full Scan](https://www.zaproxy.org/docs/docker/full-scan/) to perform
-Dynamic Application Security Testing (DAST). 
+运行OWASP ZAP [Full Scan]（https://www.zaproxy.org/docs/docker/full-scan/）的GitHub操作以执行
 
-The ZAP full scan action runs the ZAP spider against the specified target (by default with no time limit) followed by an 
-optional ajax spider scan and then a full active scan before reporting the results. The alerts will be maintained as a 
-GitHub issue in the corresponding repository.
+ZAP完全扫描操作针对指定的目标（默认情况下没有时间限制）运行ZAP蜘蛛，随后进行可选的Ajax蜘蛛扫描，然后进行完全活动扫描，然后报告结果。警报将作为GitHub问题维护在相应的存储库中。
 
-**WARNING** this action will perform attacks on the target website.
-You should only scan targets that you have permission to test.
-You should also check with your hosting company and any other services such as CDNs that may be affected before running this action.
-ZAP will also submit forms which could result in a [large number of messages](https://www.zaproxy.org/faq/how-can-i-prevent-zap-from-sending-me-1000s-of-emails-via-a-contact-us-form/) via, for example, 'Contact us' or 'comment' forms.
+**警告** 此操作将对目标网站进行攻击。您应仅扫描您有权测试的目标。在执行此操作之前，还应向托管公司和可能受到影响的任何其他服务（例如CDN）进行检查。ZAP还将提交可能导致[大量邮件]的表格（https://www.zaproxy.org/faq/how-can-i-prevent-zap-from-sending-me-1000s-of-emails-via-a -contact-us-form /），例如通过“与我们联系”或“评论”表单。
 
-## Inputs
+## 输入
 
 ### `target`
 
-**Required** The URL of the web application to be scanned. This can be either a publicly available web application or a locally
-accessible URL.
+**Required** 要扫描的Web应用程序的URL。这可以是公共可用的Web应用程序，也可以是本地可访问的URL。
 
 ### `docker_name`
 
-**Optional** The name of the docker file to be executed. By default the action runs the stable version of ZAP. But you can 
-configure the parameter to use the weekly builds.
+**Optional** 要执行的docker文件的名称。默认情况下，该操作运行ZAP的稳定版本。但是您可以配置参数以使用每周构建。
 
 ### `rules_file_name`
 
-**Optional** You can also specify a relative path to the rules file to ignore any alerts from the ZAP scan. Make sure to create
-the rules file inside the relevant repository. The following shows a sample rules file configuration.
-Make sure to checkout the repository (actions/checkout@v2) to provide the ZAP rules to the scan action.
+**Optional** 您还可以指定规则文件的相对路径，以忽略来自ZAP扫描的任何警报。确保在相关存储库中创建规则文件。下面显示了一个规则文件配置示例，请确保检出存储库 (actions/checkout@v2) 以将ZAP规则提供给扫描操作。
 
 ```tsv
-10011	IGNORE	(Cookie Without Secure Flag)
-10015	IGNORE	(Incomplete or No Cache-control and Pragma HTTP Header Set)
+10011	IGNORE	(没有安全标志的Cookie)
+10015	IGNORE	(不完整或没有缓存控制和Pragma HTTP请求头)
 ``` 
 
 ### `cmd_options`
 
-**Optional** Additional command lines options for the full scan script
+**Optional** 完整扫描脚本的其他命令行选项
 
 ### `issue_title`
 
-**Optional** The title for the GitHub issue to be created.
+**Optional** 要创建的GitHub issue的标题。
 
 ### `token`
 
-**Optional** ZAP action uses the default action token provided by GitHub to create and update the issue for the full scan.
-You do not have to create a dedicated token. Make sure to use the GitHub's default action token when running the action(`secrets.GIT_TOKEN`).
+**Optional** ZAP操作使用GitHub提供的默认操作令牌创建和更新完整扫描的问题，而无需创建专用令牌。确保在运行action（`secrets.GIT_TOKEN`）时使用GitHub的默认action令牌。
 
 ### `fail_action`
 
-**Optional** By default ZAP Docker container will fail with an [exit code](https://github.com/zaproxy/zaproxy/blob/efb404d38280dc9ecf8f88c9b0c658385861bdcf/docker/zap-full-scan.py#L31), 
-if it identifies any alerts. Set this option to `true` if you want to fail the status of the GitHub Scan if ZAP identifies any alerts during the scan.
+**Optional** 默认情况下，ZAP Docker容器将失败并显示[退出代码]（https://github.com/zaproxy/zaproxy/blob/efb404d38280dc9ecf8f88c9b0c658385861bdcf/docker/zap-full-scan.py#L31），如果它标识任何警报。如果您希望在ZAP在扫描期间识别任何警报时使GitHub Scan的状态失败，则将此选项设置为true。
 
 ## Example usage
 
@@ -88,14 +76,14 @@ jobs:
           cmd_options: '-a'
 ```
 
-## Localised Alert Details
+## 本地化警报详细信息
 
-ZAP is internationalised and alert information is available in many languages.
+ZAP是国际化的，警报信息可以多种语言提供
 
-You can change the language used by this action by changing the locale via the `cmd_options` e.g.: `-z "-config view.locale=fr_FR"`
+您可以通过`cmd_options`更改语言环境来更改此操作使用的语言，例如: `-z "-config view.locale=fr_FR"`
 
-This is currently only available with the `owasp/zap2docker-weekly` or `owasp/zap2docker-live` Docker images.
+当前仅适用于“ owasp / zap2docker-weekly”或“ owasp / zap2docker-live” Docker镜像。
 
-See [https://github.com/zaproxy/zaproxy/tree/develop/zap/src/main/dist/lang](https://github.com/zaproxy/zaproxy/tree/develop/zap/src/main/dist/lang) for the full set of locales currently supported.
+参见[https://github.com/zaproxy/zaproxy/tree/develop/zap/src/main/dist/lang](https://github.com/zaproxy/zaproxy/tree/develop/zap/src/main / dist / lang）表示当前支持的所有语言环境。
 
-You can help improve ZAP translations via [https://crowdin.com/project/owasp-zap](https://crowdin.com/project/owasp-zap). 
+您可以通过[https://crowdin.com/project/owasp-zap](https://crowdin.com/project/owasp-zap）帮助改进ZAP翻译。
